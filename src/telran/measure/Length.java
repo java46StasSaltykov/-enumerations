@@ -1,7 +1,5 @@
 package telran.measure;
 
-import java.text.DecimalFormat;
-
 public class Length implements Comparable<Length> {
 	private final float amount;
 	private final LengthUnit unit;
@@ -16,22 +14,13 @@ public class Length implements Comparable<Length> {
 	 * equals two Length objects according to LengthUnit 10m == 10000mm
 	 */
 	public boolean equals(Object obj) {
-		if (((Length) obj).convert(this.unit).amount == amount) {
-			return true;
-		} else {
-			return false;
-		}
+		return compareTo((Length) obj) == 0;
 	}
 
 	@Override
 	public int compareTo(Length o) {
-		if (o.convert(this.unit).amount > this.amount) {
-			return -1;
-		} else if (o.convert(this.unit).amount < this.amount) {
-			return 1;
-		} else {
-			return 0;
-		}
+
+		return Float.compare(amount, o.convert(unit).amount);
 	}
 
 	/**
@@ -41,9 +30,8 @@ public class Length implements Comparable<Length> {
 	 *         returns Length in meters
 	 */
 	public Length convert(LengthUnit unit) {
-		float converted = amount / (unit.getValue() / this.unit.getValue());
-		Length res = new Length(converted, unit);
-		return res;
+
+		return new Length(amount * this.unit.getValue() / unit.getValue(), unit);
 	}
 
 	@Override
@@ -52,8 +40,11 @@ public class Length implements Comparable<Length> {
 	 * Example: 20M (string expression of Length object designed 20 meters)
 	 */
 	public String toString() {
-		DecimalFormat df = new DecimalFormat("0.#");
-		return df.format(amount) + "" + unit;
+		String amountStr = Float.toString(amount);
+		if (amountStr.matches(".*\\.0+")) {
+			amountStr = amountStr.replaceAll("\\.0+", "");
+		}
+		return amountStr + unit.toString();
 	}
 
 	public float getAmount() {

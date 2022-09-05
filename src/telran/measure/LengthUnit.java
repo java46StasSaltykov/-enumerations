@@ -22,10 +22,9 @@ public enum LengthUnit {
 	 *         Length(1, LengthUnit.M)
 	 */
 	public Length between(Length l1, Length l2) {
-		float l1Length = l1.convert(l1.getUnit()).getAmount();
-		float l2Length = l2.convert(l1.getUnit()).getAmount();
-		float res = l1Length - l2Length > 0 ? Math.round(l1Length - l2Length) : Math.round(l2Length - l1Length);
-		Length lengthBetween = new Length(res, LengthUnit.M);
-		return lengthBetween;
+		Length length1 = l1.convert(this);
+		Length length2 = l2.convert(this);
+		return new Length(length2.getAmount() - length1.getAmount(), this);
 	}
+
 }
